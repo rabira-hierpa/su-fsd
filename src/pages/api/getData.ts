@@ -1,11 +1,16 @@
+import { CSVData } from "@/app/types/csvData";
 import csvtojson from "csvtojson";
 import { NextApiRequest, NextApiResponse } from "next";
 import path from "path";
 
 const csvFilePath = path.join(process.cwd(), "src/data.csv");
+let cachedData: CSVData[] | null = null;
 
 async function getJsonData() {
-  return await csvtojson({ delimiter: ";" }).fromFile(csvFilePath);
+  if (!cachedData) {
+    return await csvtojson({ delimiter: ";" }).fromFile(csvFilePath);
+  }
+  return cachedData;
 }
 
 function extractNumber(str: string) {
