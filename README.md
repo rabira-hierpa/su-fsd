@@ -1,3 +1,10 @@
+# SU FSD
+
+This project is a Next.js project that is used to demonstrate listing and sorting CSV data.
+It makes use of `csvtojson` to convert the CSV data to JSON, and a custom sorting algorithm to sort the data.
+
+Feel free to take a look at the deployed version of this project at [https://su-fsd-rho.vercel.app/](https://su-fsd-rho.vercel.app/).
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
@@ -5,6 +12,12 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 First, run the development server:
 
 ```bash
+# Install dependencies
+npm install
+# or
+yarn
+
+# Run the development server
 npm run dev
 # or
 yarn dev
