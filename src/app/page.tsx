@@ -2,11 +2,12 @@
 import React, { useEffect, useState } from "react";
 import Loading from "./components/shared/Loading";
 import Error from "./components/shared/Error";
+import { CSVData } from "./types/csvData";
 
 export default function Home() {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<CSVData[]>([]);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     fetch("/api/getData")
@@ -25,7 +26,7 @@ export default function Home() {
     fetch("/api/getData", {
       method: "POST",
       headers: {
-        "Content-type": "application/json",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ sortBy: param }),
     })
@@ -101,7 +102,7 @@ export default function Home() {
           <h1 className="flex mx-auto text-2xl">No data to display</h1>
         )}
         <div className="grid grid-cols-2 gap-10 max-w-5xl">
-          {data.map((item: any) => {
+          {data.map((item: CSVData) => {
             return (
               <div
                 key={item.date}
