@@ -25,7 +25,11 @@ async function getSortedData(params: string) {
       return sortedData;
     case "fileNameAscend":
       const jsonArray1 = await getJsonData();
-      const ascendSorted = jsonArray1.toSorted((a: any, b: any) => {
+      const jsonWithArray = jsonArray1.map((item: any) => ({
+        ...item,
+        number: extractNumber(item.file_name),
+      }));
+      const ascendSorted = jsonWithArray.toSorted((a: any, b: any) => {
         const numA = extractNumber(a.file_name);
         const numB = extractNumber(b.file_name);
         if (!isNaN(numA) && !isNaN(numB)) {
