@@ -3,9 +3,10 @@ import React, { useEffect, useState } from "react";
 import Loading from "./components/shared/Loading";
 import Error from "./components/shared/Error";
 import { CSVData } from "./types/csvData";
+import extractNumber from "./utils/extractNumber";
 
 export default function Home() {
-  const [data, setData] = useState<CSVData[]>([]);
+  const [data, setData] = useState<CSVData[] | undefined>([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -25,23 +26,50 @@ export default function Home() {
       .finally(() => setLoading(false));
   }, []);
 
+  async function getSortedData(params: string) {
+    switch (params) {
+      case "createdAt":
+        const sortedData = data?.toSorted((a, b) => {
+          const dateA = new Date(a.date);
+          const dateB = new Date(b.date);
+          return dateA.getTime() - dateB.getTime();
+        });
+        return sortedData;
+      case "fileNameAscend":
+        const ascendSorted = data?.toSorted((a: any, b: any) => {
+          const numA = extractNumber(a.file_name);
+          const numB = extractNumber(b.file_name);
+          if (!isNaN(numA) && !isNaN(numB)) {
+            return numA - numB || a.file_name.localeCompare(b.file_name);
+          } else {
+            return a.file_name.localeCompare(b.file_name);
+          }
+        });
+        return ascendSorted;
+      case "fileNameDescend":
+        const descendSorted = data?.toSorted((a: any, b: any) => {
+          const numA = extractNumber(a.file_name);
+          const numB = extractNumber(b.file_name);
+          if (!isNaN(numA) && !isNaN(numB)) {
+            return numB - numA || b.file_name.localeCompare(a.file_name);
+          } else {
+            return b.file_name.localeCompare(a.file_name);
+          }
+        });
+        return descendSorted;
+      default:
+        break;
+    }
+  }
+
   const sortByParams = (param: string) => {
     setLoading(true);
-    fetch("/api/getData", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ sortBy: param }),
-      next: {
-        revalidate: 3600, // Revalidate after 1 hour
-      },
-    })
-      .then((res) => res.json())
+    getSortedData(param)
       .then((data) => {
         setData(data);
       })
       .catch((err) => {
+        console.log(error);
         setError(err);
       })
       .finally(() => setLoading(false));
@@ -68,9 +96,9 @@ export default function Home() {
               aria-hidden="true"
             >
               <path
-                fill-rule="evenodd"
+                fillRule="evenodd"
                 d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                clip-rule="evenodd"
+                clipRule="evenodd"
               />
             </svg>
           </button>
@@ -105,11 +133,11 @@ export default function Home() {
         </div>
       </div>
       <div className="flex mx-auto mt-10">
-        {!data.length && (
+        {!data?.length && (
           <h1 className="flex mx-auto text-2xl">No data to display</h1>
         )}
         <div className="grid grid-cols-2 gap-10 max-w-5xl">
-          {data.map((item: CSVData) => {
+          {data?.map((item: CSVData) => {
             return (
               <div
                 key={item.date}
