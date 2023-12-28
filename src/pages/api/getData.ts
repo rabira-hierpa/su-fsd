@@ -26,7 +26,13 @@ async function getSortedData(params: string) {
     case "fileNameAscend":
       const jsonArray1 = await getJsonData();
       const ascendSorted = jsonArray1.toSorted((a: any, b: any) => {
-        return a.file_name.localeCompare(b.file_name);
+        const numA = extractNumber(a.file_name);
+        const numB = extractNumber(b.file_name);
+        if (!isNaN(numA) && !isNaN(numB)) {
+          return numA - numB || a.file_name.localeCompare(b.file_name);
+        } else {
+          return a.file_name.localeCompare(b.file_name);
+        }
       });
       return ascendSorted;
     case "fileNameDescend":
