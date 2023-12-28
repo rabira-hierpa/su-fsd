@@ -10,7 +10,11 @@ export default function Home() {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    fetch("/api/getData")
+    fetch("/api/getData", {
+      next: {
+        revalidate: 3600, // Revalidate after 1 hour
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
         setData(data);
@@ -29,6 +33,9 @@ export default function Home() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ sortBy: param }),
+      next: {
+        revalidate: 3600, // Revalidate after 1 hour
+      },
     })
       .then((res) => res.json())
       .then((data) => {
